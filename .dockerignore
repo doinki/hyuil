@@ -1,0 +1,10 @@
+.git
+dist
+node_modules
+.env
+.gitignore
+.nvmrc
+.prettierrc.json
+Dockerfile
+LICENSE
+README.md
