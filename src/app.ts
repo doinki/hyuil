@@ -28,7 +28,7 @@ const cache = new LRUCache<
     locdate: number;
     seq: number;
   }[]
->({ allowStale: true, max: 10, ttl: 1000 * 60 * 60 });
+>({ allowStale: true, max: 10, ttl: 1000 * 60 * 60 * 24 });
 
 const envSchema = z.object({
   SERVICE_KEY: z.string(),

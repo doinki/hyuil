@@ -3,13 +3,13 @@ FROM node:22-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY pnpm-lock.yaml .
-RUN corepack enable pnpm && pnpm fetch
+RUN corepack enable && npm i -g corepack && corepack prepare pnpm@latest --activate && pnpm fetch
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules node_modules
 COPY . .
-RUN corepack enable pnpm && \
+RUN corepack enable && npm i -g corepack && corepack prepare pnpm@latest --activate && \
     pnpm install --frozen-lockfile --offline && \
     pnpm build && \
     pnpm prune --prod
