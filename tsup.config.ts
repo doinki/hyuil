@@ -7,6 +7,6 @@ export default defineConfig({
     NODE_ENV: 'production',
   },
   format: 'esm',
-  target: 'es2023',
+  target: 'node22.14',
   treeshake: true,
 });

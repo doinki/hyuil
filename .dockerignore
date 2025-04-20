@@ -1,7 +1,9 @@
 .git
+.github
 dist
 node_modules
 .env
+.dockerignore
 .gitignore
 .nvmrc
 .prettierrc.json
