@@ -40,7 +40,8 @@ const envSchema = z.object({
 const result = envSchema.safeParse(process.env);
 
 if (!result.success) {
-  throw new Error(JSON.stringify(result.error.flatten().fieldErrors, null, 2));
+  console.error(JSON.stringify(result.error.flatten().fieldErrors, null, 2));
+  process.exit(1);
 }
 
 const app = new Hono();
@@ -117,11 +118,8 @@ app.get('/:year/:month?/:day?', async (c) => {
   }
 
   if (day) {
-    const date = Number(
-      `${year}${month!.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`,
-    );
-    const isHoliday =
-      holidays.findIndex((holiday) => holiday.locdate === date) !== -1;
+    const date = Number(`${year}${month!.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`);
+    const isHoliday = holidays.findIndex((holiday) => holiday.locdate === date) !== -1;
 
     return c.json({
       year,
@@ -135,9 +133,7 @@ app.get('/:year/:month?/:day?', async (c) => {
     return c.json({
       year,
       month,
-      data: holidays.filter((holiday) =>
-        holiday.locdate.toString().startsWith(date),
-      ),
+      data: holidays.filter((holiday) => holiday.locdate.toString().startsWith(date)),
     });
   } else {
     return c.json({

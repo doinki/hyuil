@@ -6,6 +6,7 @@ node_modules
 .dockerignore
 .gitignore
 .nvmrc
+.prettierignore
 .prettierrc.json
 Dockerfile
 LICENSE

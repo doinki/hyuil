@@ -2,15 +2,19 @@ FROM node:22-alpine AS base
 
 FROM base AS deps
 WORKDIR /app
+RUN corepack enable
+
 COPY pnpm-lock.yaml .
-RUN corepack enable && npm i -g corepack && corepack prepare pnpm@latest --activate && pnpm fetch
+RUN pnpm fetch
 
 FROM base AS builder
 WORKDIR /app
+RUN corepack enable
+
 COPY --from=deps /app/node_modules node_modules
 COPY . .
-RUN corepack enable && npm i -g corepack && corepack prepare pnpm@latest --activate && \
-    pnpm install --frozen-lockfile --offline && \
+
+RUN pnpm install --frozen-lockfile --offline && \
     pnpm build && \
     pnpm prune --prod
 
@@ -19,6 +23,7 @@ WORKDIR /app
 RUN addgroup -g 1001 -S nodejs && \
     adduser -u 1001 -S nodejs && \
     chown -R nodejs:nodejs /app
+    
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/dist dist
 COPY --chown=nodejs:nodejs package.json .
