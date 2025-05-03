@@ -6,7 +6,6 @@ import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
 import { LRUCache } from 'lru-cache';
 import { gracefulShutdown } from 'server.close';
-
 import { z } from 'zod';
 
 declare global {
@@ -117,50 +116,35 @@ app.get('/:year/:month?/:day?', async (c) => {
     return c.body(null);
   }
 
+  c.header('Cache-Control', 'max-age=300, public');
+
   if (day) {
     const date = Number(`${year}${month!.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`);
     const isHoliday = holidays.findIndex((holiday) => holiday.locdate === date) !== -1;
 
-    return c.json({
-      year,
-      month,
-      day,
-      isHoliday,
-    });
+    return c.json({ year, month, day, isHoliday });
   } else if (month) {
     const date = `${year}${month.toString().padStart(2, '0')}`;
 
-    return c.json({
-      year,
-      month,
-      data: holidays.filter((holiday) => holiday.locdate.toString().startsWith(date)),
-    });
+    return c.json({ year, month, data: holidays.filter((holiday) => holiday.locdate.toString().startsWith(date)) });
   } else {
-    return c.json({
-      year,
-      data: holidays,
-    });
+    return c.json({ year, data: holidays });
   }
 });
 
-const server = serve(
-  {
-    fetch: app.fetch,
-    hostname: HOST,
-    port: PORT,
-  },
-  async () => {
-    console.log('⬆️');
+const server = serve({ fetch: app.fetch, hostname: HOST, port: PORT }, () => {
+  console.log('⬆️');
 
-    process.send?.('ready');
-  },
-);
-
-// @ts-expect-error
-server.keepAliveTimeout = KEEPALIVE_TIMEOUT;
-
-gracefulShutdown(server, {
-  onShutdown: () => {
-    console.log('⬇️');
-  },
+  process.send?.('ready');
 });
+
+if (process.env.NODE_ENV === 'production') {
+  // @ts-expect-error
+  server.keepAliveTimeout = KEEPALIVE_TIMEOUT;
+
+  gracefulShutdown(server, {
+    onShutdown: () => {
+      console.log('⬇️');
+    },
+  });
+}

@@ -30,4 +30,5 @@ COPY --chown=nodejs:nodejs package.json .
 
 USER nodejs
 ENV NODE_ENV=production
+ENV TZ=Asia/Seoul
 CMD ["node", "dist/app.js"]
