@@ -134,8 +134,6 @@ app.get('/:year/:month?/:day?', async (c) => {
 
 const server = serve({ fetch: app.fetch, hostname: HOST, port: PORT }, () => {
   console.log('⬆️');
-
-  process.send?.('ready');
 });
 
 if (process.env.NODE_ENV === 'production') {
