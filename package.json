@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.12.2",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -11,21 +11,21 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.1",
+    "@hono/node-server": "^1.14.4",
     "chalk": "^5.4.1",
     "dotenv": "^16.5.0",
-    "hono": "^4.7.8",
+    "hono": "^4.8.2",
     "lru-cache": "^11.1.0",
     "server.close": "^0.0.2",
     "source-map-support": "^0.5.21",
-    "zod": "^3.24.4"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@types/node": "^22.15.12",
+    "@types/node": "^22.15.32",
     "@types/source-map-support": "^0.5.10",
-    "prettier": "^3.5.3",
-    "tsup": "^8.4.0",
-    "tsx": "^4.19.4",
+    "prettier": "^3.6.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }
