@@ -15,25 +15,25 @@ declare global {
 }
 
 const HOST = process.env.HOST || '0.0.0.0';
-const KEEPALIVE_TIMEOUT = Number(process.env.KEEPALIVE_TIMEOUT) || 65000;
+const KEEPALIVE_TIMEOUT = Number(process.env.KEEPALIVE_TIMEOUT) || 20_000;
 const PORT = Number(process.env.PORT) || 3000;
 
 const cache = new LRUCache<
   number,
-  {
+  Array<{
     dateKind: string;
     dateName: string;
     isHoliday: 'Y' | 'N';
     locdate: number;
     seq: number;
-  }[]
+  }>
 >({ allowStale: true, max: 10, ttl: 1000 * 60 * 60 * 24 });
 
 const envSchema = z.object({
-  SERVICE_KEY: z.string(),
   HOST: z.string().optional(),
-  PORT: z.string().optional(),
   KEEPALIVE_TIMEOUT: z.string().optional(),
+  PORT: z.string().optional(),
+  SERVICE_KEY: z.string(),
 });
 
 const result = envSchema.safeParse(process.env);
@@ -54,13 +54,13 @@ app.get('/health', (c) => {
 app.use(logger());
 
 const schema = z.object({
+  day: z.coerce.number().int().min(1).max(31).optional(),
+  month: z.coerce.number().int().min(1).max(12).optional(),
   year: z.coerce
     .number()
     .int()
     .min(2004)
     .refine((value) => value <= new Date().getFullYear() + 1),
-  month: z.coerce.number().int().min(1).max(12).optional(),
-  day: z.coerce.number().int().min(1).max(31).optional(),
 });
 
 app.get('/:year/:month?/:day?', async (c) => {
@@ -71,7 +71,7 @@ app.get('/:year/:month?/:day?', async (c) => {
     return c.body(null);
   }
 
-  const { year, month, day } = result.data;
+  const { day, month, year } = result.data;
 
   if (!cache.has(year)) {
     const data = await fetch(
@@ -85,7 +85,7 @@ app.get('/:year/:month?/:day?', async (c) => {
         response: {
           body: {
             items: {
-              item: {
+              item: Array<{
                 dateKind: string;
                 dateName: string;
                 isHoliday: 'Y' | 'N';
@@ -94,7 +94,7 @@ app.get('/:year/:month?/:day?', async (c) => {
                  */
                 locdate: number;
                 seq: number;
-              }[];
+              }>;
             };
           };
         };
@@ -109,7 +109,7 @@ app.get('/:year/:month?/:day?', async (c) => {
 
   const holidays = cache.get(year);
   if (!holidays) {
-    console.log({ year, month, day });
+    console.log({ day, month, year });
 
     c.status(500);
 
@@ -120,26 +120,34 @@ app.get('/:year/:month?/:day?', async (c) => {
 
   if (day) {
     const date = Number(`${year}${month!.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`);
-    const isHoliday = holidays.findIndex((holiday) => holiday.locdate === date) !== -1;
+    const isHoliday = holidays.some((holiday) => holiday.locdate === date);
 
-    return c.json({ year, month, day, isHoliday });
+    return c.json({ day, isHoliday, month, year });
   } else if (month) {
     const date = `${year}${month.toString().padStart(2, '0')}`;
 
-    return c.json({ year, month, data: holidays.filter((holiday) => holiday.locdate.toString().startsWith(date)) });
+    return c.json({ data: holidays.filter((holiday) => holiday.locdate.toString().startsWith(date)), month, year });
   } else {
-    return c.json({ year, data: holidays });
+    return c.json({ data: holidays, year });
   }
 });
 
-const server = serve({ fetch: app.fetch, hostname: HOST, port: PORT }, () => {
-  console.log('⬆️');
-});
+const server = serve(
+  {
+    fetch: app.fetch,
+    hostname: HOST,
+    port: PORT,
+    serverOptions: {
+      keepAlive: true,
+      keepAliveTimeout: KEEPALIVE_TIMEOUT,
+    },
+  },
+  () => {
+    console.log('⬆️');
+  },
+);
 
 if (process.env.NODE_ENV === 'production') {
-  // @ts-expect-error
-  server.keepAliveTimeout = KEEPALIVE_TIMEOUT;
-
   gracefulShutdown(server, {
     onShutdown: () => {
       console.log('⬇️');
