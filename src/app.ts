@@ -1,12 +1,17 @@
 import 'dotenv/config';
 
+import { styleText } from 'node:util';
+
 import { serve } from '@hono/node-server';
+import { ip } from 'address';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
 import { LRUCache } from 'lru-cache';
 import { gracefulShutdown } from 'server.close';
 import { z } from 'zod';
+
+const start = performance.now();
 
 declare global {
   namespace NodeJS {
@@ -27,7 +32,7 @@ const cache = new LRUCache<
     locdate: number;
     seq: number;
   }>
->({ allowStale: true, max: 10, ttl: 1000 * 60 * 60 * 24 });
+>({ allowStale: true, max: 365, ttl: 1000 * 60 * 60 * 24 });
 
 const envSchema = z.object({
   HOST: z.string().optional(),
@@ -132,6 +137,13 @@ app.get('/:year/:month?/:day?', async (c) => {
   }
 });
 
+const localUrl = `http://localhost:${styleText('bold', PORT.toString())}/`;
+let lanUrl: string | null = null;
+const localIp = ip() ?? 'Unknown';
+if (/^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./.test(localIp)) {
+  lanUrl = `http://${localIp}:${styleText('bold', PORT.toString())}/`;
+}
+
 const server = serve(
   {
     fetch: app.fetch,
@@ -143,14 +155,15 @@ const server = serve(
     },
   },
   () => {
-    console.log('⬆️');
+    const end = performance.now();
+
+    console.log(`${styleText('gray', 'ready in')} ${styleText('bold', (end - start).toFixed(2))} ms`);
+    console.log(
+      `${styleText('green', '➜')} Local:   ${styleText('cyan', localUrl)}\n${lanUrl ? `${styleText('green', '➜')} Network: ${styleText('cyan', lanUrl)}` : ''}`.trim(),
+    );
   },
 );
 
 if (process.env.NODE_ENV === 'production') {
-  gracefulShutdown(server, {
-    onShutdown: () => {
-      console.log('⬇️');
-    },
-  });
+  gracefulShutdown(server);
 }

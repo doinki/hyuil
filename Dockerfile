@@ -16,7 +16,7 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile --offline && \
     pnpm build && \
-    pnpm prune --prod
+    pnpm prune --ignore-scripts --prod
 
 FROM base AS runner
 WORKDIR /app

@@ -7,6 +7,7 @@ export default defineConfig({
     NODE_ENV: 'production',
   },
   format: 'esm',
-  target: 'node22.15',
+  minifyWhitespace: true,
+  target: 'node22.17',
   treeshake: true,
 });
