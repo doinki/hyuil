@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
-  "packageManager": "pnpm@10.12.4",
+  "packageManager": "pnpm@10.13.1",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -12,20 +12,21 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.4",
+    "@hono/node-server": "^1.17.1",
     "address": "^2.0.3",
     "chalk": "^5.4.1",
-    "dotenv": "^17.0.0",
-    "hono": "^4.8.3",
+    "dotenv": "^17.2.0",
+    "hono": "^4.8.5",
     "lru-cache": "^11.1.0",
+    "pretty-cache-header": "^1.0.0",
     "server.close": "^0.0.2",
     "source-map-support": "^0.5.21",
-    "zod": "^3.25.67"
+    "zod": "^4.0.8"
   },
   "devDependencies": {
-    "@types/node": "^22.15.33",
+    "@types/node": "^24.1.0",
     "@types/source-map-support": "^0.5.10",
-    "eslint": "^9.30.0",
+    "eslint": "^9.31.0",
     "eslint-config-mado": "^0.10.1",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",

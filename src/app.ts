@@ -9,6 +9,7 @@ import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
 import { LRUCache } from 'lru-cache';
 import { gracefulShutdown } from 'server.close';
+import { cacheHeader } from 'pretty-cache-header';
 import { z } from 'zod';
 
 const start = performance.now();
@@ -44,7 +45,7 @@ const envSchema = z.object({
 const result = envSchema.safeParse(process.env);
 
 if (!result.success) {
-  console.error(JSON.stringify(result.error.flatten().fieldErrors, null, 2));
+  console.error(z.flattenError(result.error).fieldErrors);
   process.exit(1);
 }
 
@@ -52,7 +53,7 @@ const app = new Hono();
 
 app.use(timing());
 app.get('/health', (c) => {
-  c.header('Cache-Control', 'no-store');
+  c.header('Cache-Control', cacheHeader({ noStore: true }));
 
   return c.text('OK');
 });
@@ -121,7 +122,7 @@ app.get('/:year/:month?/:day?', async (c) => {
     return c.body(null);
   }
 
-  c.header('Cache-Control', 'max-age=300, public');
+  c.header('Cache-Control', cacheHeader({ maxAge: '5m', public: true, staleWhileRevalidate: '25m' }));
 
   if (day) {
     const date = Number(`${year}${month!.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`);
