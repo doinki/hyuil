@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.17.1",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -12,25 +12,26 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@hono/node-server": "^1.17.1",
+    "@hono/node-server": "^1.19.4",
     "address": "^2.0.3",
-    "chalk": "^5.4.1",
-    "dotenv": "^17.2.0",
-    "hono": "^4.8.5",
-    "lru-cache": "^11.1.0",
+    "chalk": "^5.6.2",
+    "dotenv": "^17.2.2",
+    "hono": "^4.9.9",
+    "lru-cache": "^11.2.2",
     "pretty-cache-header": "^1.0.0",
     "server.close": "^0.0.2",
     "source-map-support": "^0.5.21",
-    "zod": "^4.0.8"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.5.2",
     "@types/source-map-support": "^0.5.10",
-    "eslint": "^9.31.0",
+    "eslint": "^9.36.0",
     "eslint-config-mado": "^0.10.1",
+    "globals": "^16.4.0",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
   }
 }

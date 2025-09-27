@@ -6,10 +6,9 @@ import { serve } from '@hono/node-server';
 import { ip } from 'address';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
-import { timing } from 'hono/timing';
 import { LRUCache } from 'lru-cache';
-import { gracefulShutdown } from 'server.close';
 import { cacheHeader } from 'pretty-cache-header';
+import { gracefulShutdown } from 'server.close';
 import { z } from 'zod';
 
 const start = performance.now();
@@ -51,7 +50,6 @@ if (!result.success) {
 
 const app = new Hono();
 
-app.use(timing());
 app.get('/health', (c) => {
   c.header('Cache-Control', cacheHeader({ noStore: true }));
 
@@ -162,6 +160,8 @@ const server = serve(
     console.log(
       `${styleText('green', '➜')} Local:   ${styleText('cyan', localUrl)}\n${lanUrl ? `${styleText('green', '➜')} Network: ${styleText('cyan', lanUrl)}` : ''}`.trim(),
     );
+
+    process.send?.('ready');
   },
 );
 

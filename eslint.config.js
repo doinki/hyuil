@@ -9,13 +9,19 @@ import { generateConfig as generatePrettierConfig } from 'eslint-config-mado/pre
 import { generateConfig as generateSortConfig } from 'eslint-config-mado/sort';
 import { generateConfig as generateTsConfig } from 'eslint-config-mado/typescript';
 import { generateConfig as generateUnicornConfig } from 'eslint-config-mado/unicorn';
+import globals from 'globals';
 
 const gitignorePath = join(import.meta.dirname, '.gitignore');
 
 export default config([
   includeIgnoreFile(gitignorePath),
+  {
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   generateJsConfig(),
-  generateTsConfig(),
+  generateTsConfig({ project: join(import.meta.dirname, 'tsconfig.json') }),
   generateImportConfig(),
   generateUnicornConfig(),
   generateSortConfig(),
