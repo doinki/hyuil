@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import { styleText } from 'node:util';
 
 import { serve } from '@hono/node-server';
@@ -11,17 +9,11 @@ import { cacheHeader } from 'pretty-cache-header';
 import { gracefulShutdown } from 'server.close';
 import { z } from 'zod';
 
+import { validateEnv } from './env';
+
 const start = performance.now();
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof envSchema> {}
-  }
-}
-
-const HOST = process.env.HOST || '0.0.0.0';
-const KEEPALIVE_TIMEOUT = Number(process.env.KEEPALIVE_TIMEOUT) || 20_000;
-const PORT = Number(process.env.PORT) || 3000;
+const { HOST, KEEPALIVE_TIMEOUT, PORT, SERVICE_KEY } = validateEnv();
 
 const cache = new LRUCache<
   number,
@@ -33,20 +25,6 @@ const cache = new LRUCache<
     seq: number;
   }>
 >({ allowStale: true, max: 365, ttl: 1000 * 60 * 60 * 24 });
-
-const envSchema = z.object({
-  HOST: z.string().optional(),
-  KEEPALIVE_TIMEOUT: z.string().optional(),
-  PORT: z.string().optional(),
-  SERVICE_KEY: z.string(),
-});
-
-const result = envSchema.safeParse(process.env);
-
-if (!result.success) {
-  console.error(z.flattenError(result.error).fieldErrors);
-  process.exit(1);
-}
 
 const app = new Hono();
 
@@ -79,7 +57,7 @@ app.get('/:year/:month?/:day?', async (c) => {
 
   if (!cache.has(year)) {
     const data = await fetch(
-      `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${process.env.SERVICE_KEY}&solYear=${year}&numOfRows=100&_type=json`,
+      `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${SERVICE_KEY}&solYear=${year}&numOfRows=100&_type=json`,
     ).then((res) => {
       if (!res.ok) {
         throw new Error([res.status, res.statusText].join(' '));
