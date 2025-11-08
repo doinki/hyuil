@@ -9,7 +9,7 @@ const envSchema = z.object({
   SERVICE_KEY: z.string(),
 });
 
-export function validateEnv() {
+function validateEnv() {
   const result = envSchema.safeParse(process.env);
 
   if (!result.success) {
@@ -19,3 +19,5 @@ export function validateEnv() {
 
   return result.data;
 }
+
+export const env = validateEnv();

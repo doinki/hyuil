@@ -2,10 +2,10 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "target": "ES2023"
+    "target": "es2024"
   }
 }

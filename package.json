@@ -9,27 +9,20 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsup",
-    "lint": "eslint"
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "address": "^2.0.3",
-    "chalk": "^5.6.2",
     "dotenv": "^17.2.3",
     "hono": "^4.10.4",
     "lru-cache": "^11.2.2",
     "pretty-cache-header": "^1.0.0",
     "server.close": "^0.2.0",
-    "source-map-support": "^0.5.21",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
-    "@types/source-map-support": "^0.5.10",
-    "eslint": "^9.39.1",
-    "eslint-config-mado": "^0.10.1",
-    "globals": "^16.5.0",
-    "prettier": "^3.6.2",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
