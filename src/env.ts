@@ -9,12 +9,6 @@ const envSchema = z.object({
   SERVICE_KEY: z.string(),
 });
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof envSchema> {}
-  }
-}
-
 export function validateEnv() {
   const result = envSchema.safeParse(process.env);
 
