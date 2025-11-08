@@ -1,7 +1,4 @@
-import { styleText } from 'node:util';
-
 import { serve } from '@hono/node-server';
-import { ip } from 'address';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { LRUCache } from 'lru-cache';
@@ -10,6 +7,7 @@ import { gracefulShutdown } from 'server.close';
 import { z } from 'zod';
 
 import { validateEnv } from './env';
+import { startupLogger } from './startup-logger';
 
 const start = performance.now();
 
@@ -114,13 +112,6 @@ app.get('/:year/:month?/:day?', async (c) => {
   }
 });
 
-const localUrl = `http://localhost:${styleText('bold', PORT.toString())}/`;
-let lanUrl: string | null = null;
-const localIp = ip() ?? 'Unknown';
-if (/^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./.test(localIp)) {
-  lanUrl = `http://${localIp}:${styleText('bold', PORT.toString())}/`;
-}
-
 const server = serve(
   {
     fetch: app.fetch,
@@ -131,14 +122,8 @@ const server = serve(
       keepAliveTimeout: KEEPALIVE_TIMEOUT,
     },
   },
-  () => {
-    const end = performance.now();
-
-    console.log(`${styleText('gray', 'ready in')} ${styleText('bold', (end - start).toFixed(2))} ms`);
-    console.log(
-      `${styleText('green', '➜')} Local:   ${styleText('cyan', localUrl)}\n${lanUrl ? `${styleText('green', '➜')} Network: ${styleText('cyan', lanUrl)}` : ''}`.trim(),
-    );
-
+  ({ port }) => {
+    startupLogger({ port, start });
     process.send?.('ready');
   },
 );
