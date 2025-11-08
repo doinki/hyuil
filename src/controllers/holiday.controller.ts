@@ -38,17 +38,15 @@ export class HolidayController {
       return c.body(null);
     }
 
-    c.header(
-      'Cache-Control',
-      cacheHeader({
+    return c.json(holiday, 200, {
+      'Cache-Control': cacheHeader({
         maxAge: '1d',
         public: true,
         staleIfError: '1w',
         staleWhileRevalidate: '1d',
       }),
-    );
-
-    return c.json(holiday);
+      'Content-Type': 'application/json; charset=utf-8',
+    });
   }
 }
 
