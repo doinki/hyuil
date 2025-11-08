@@ -1,6 +1,10 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "oxc.fmt.experimental": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }

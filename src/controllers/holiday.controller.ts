@@ -40,7 +40,12 @@ export class HolidayController {
 
     c.header(
       'Cache-Control',
-      cacheHeader({ maxAge: '1d', public: true, staleWhileRevalidate: '1d', staleIfError: '1w' }),
+      cacheHeader({
+        maxAge: '1d',
+        public: true,
+        staleWhileRevalidate: '1d',
+        staleIfError: '1w',
+      }),
     );
 
     return c.json(holiday);
