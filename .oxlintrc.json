@@ -1,0 +1,7 @@
+{
+  "plugins": ["eslint", "typescript", "import", "unicorn", "oxc"],
+  "rules": {
+    "eslint/sort-keys": "warn",
+    "import/no-cycle": "error"
+  }
+}

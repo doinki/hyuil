@@ -78,8 +78,8 @@ function formatDate(locdate: number): string {
 function transformHolidayItem(raw: HolidayItemRaw): HolidayItem {
   return {
     date: formatDate(raw.locdate),
-    name: raw.dateName,
     isHoliday: raw.isHoliday === 'Y',
+    name: raw.dateName,
   };
 }
 
@@ -125,7 +125,7 @@ export class HolidayService {
       return null;
     }
 
-    return { year, holidays };
+    return { holidays, year };
   }
 
   async getMonthHolidays(year: number, month: number): Promise<MonthHolidaysResponse | null> {
@@ -138,7 +138,7 @@ export class HolidayService {
     const targetYearMonth = `${year}-${month.toString().padStart(2, '0')}`;
     const filteredHolidays = holidays.filter((holiday) => holiday.date.startsWith(targetYearMonth));
 
-    return { year, month, holidays: filteredHolidays };
+    return { holidays: filteredHolidays, month, year };
   }
 
   async getDateHoliday(year: number, month: number, day: number): Promise<DateHolidayResponse | null> {
@@ -153,20 +153,20 @@ export class HolidayService {
 
     if (!holiday || !holiday.isHoliday) {
       return {
-        year,
-        month,
         day,
-        isHoliday: false,
         holiday: null,
+        isHoliday: false,
+        month,
+        year,
       };
     }
 
     return {
-      year,
-      month,
       day,
-      isHoliday: true,
       holiday,
+      isHoliday: true,
+      month,
+      year,
     };
   }
 }

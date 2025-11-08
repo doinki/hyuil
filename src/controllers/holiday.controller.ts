@@ -43,8 +43,8 @@ export class HolidayController {
       cacheHeader({
         maxAge: '1d',
         public: true,
-        staleWhileRevalidate: '1d',
         staleIfError: '1w',
+        staleWhileRevalidate: '1d',
       }),
     );
 
