@@ -13,10 +13,9 @@ const { HOST, KEEPALIVE_TIMEOUT, PORT } = env;
 
 const app = new Hono();
 
-app.use(logger());
-
-app.route('/', routes);
 app.get('/health', (c) => c.text('OK', 200));
+app.use(logger());
+app.route('/', routes);
 
 const server = serve(
   {
