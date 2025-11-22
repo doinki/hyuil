@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.23.0",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -17,17 +17,17 @@
     "@hono/node-server": "^1.19.6",
     "address": "^2.0.3",
     "dotenv": "^17.2.3",
-    "hono": "^4.10.4",
+    "hono": "^4.10.6",
     "lru-cache": "^11.2.2",
     "pretty-cache-header": "^1.0.0",
     "server.close": "^0.2.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^24.10.0",
-    "oxfmt": "^0.11.0",
-    "oxlint": "^1.26.0",
-    "tsup": "^8.5.0",
+    "@types/node": "^24.10.1",
+    "oxfmt": "^0.14.0",
+    "oxlint": "^1.29.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
