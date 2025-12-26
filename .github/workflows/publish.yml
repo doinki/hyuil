@@ -1,12 +1,12 @@
-name: Docker
+name: 🚀 Publish
 
 on:
   push:
     branches:
-      - 'main'
+      - main
     paths:
       - src/**
-      - pnpm-lock.yaml
+      - bun.lock
   workflow_dispatch:
 
 concurrency:

@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
     "lib": ["ESNext"],
-    "module": "esnext",
+    "module": "preserve",
+    "moduleDetection": "force",
     "moduleResolution": "bundler",
-    "strict": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "target": "es2024"
-  }
+    "strict": true,
+    "target": "esnext",
+    "verbatimModuleSyntax": true
+  },
+  "exclude": ["dist"]
 }

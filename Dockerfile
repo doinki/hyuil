@@ -1,37 +1,30 @@
-FROM node:24-alpine AS base
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-FROM base AS deps
-WORKDIR /app
-RUN corepack enable pnpm
-RUN apk add --no-cache gcompat
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm fetch
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-FROM base AS builder
-WORKDIR /app
-RUN corepack enable pnpm
 
-COPY --from=deps /app/node_modules node_modules
-COPY . ./
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . .
+ENV NODE_ENV=production
+RUN bun run build
 
-RUN pnpm install --frozen-lockfile --offline && \
-    pnpm build && \
-    pnpm prune --ignore-scripts --prod
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/dist dist
+COPY --from=prerelease /usr/src/app/package.json .
 
-FROM base AS runner
-WORKDIR /app
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -u 1001 -S nodejs && \
-    chown -R nodejs:nodejs /app
-    
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/dist dist
-COPY --chown=nodejs:nodejs package.json ./
-
-USER nodejs
-
+USER bun
+EXPOSE 3000/tcp
 ENV NODE_ENV=production
 ENV TZ=Asia/Seoul
 
-CMD ["node", "dist/app.js"]
+ENTRYPOINT [ "bun", "run", "dist/app.js" ]

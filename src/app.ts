@@ -1,7 +1,5 @@
-import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
-import { gracefulShutdown } from 'server.close';
 
 import { env } from './env';
 import { routes } from './routes';
@@ -9,30 +7,28 @@ import { startupLogger } from './startup-logger';
 
 const start = performance.now();
 
-const { HOST, KEEPALIVE_TIMEOUT, PORT } = env;
-
 const app = new Hono();
 
 app.get('/health', (c) => c.text('OK', 200));
+
 app.use(logger());
+
 app.route('/', routes);
 
-const server = serve(
-  {
-    fetch: app.fetch,
-    hostname: HOST,
-    port: PORT,
-    serverOptions: {
-      keepAlive: true,
-      keepAliveTimeout: KEEPALIVE_TIMEOUT,
-    },
-  },
-  ({ port }) => {
-    startupLogger({ port, start });
-    process.send?.('ready');
-  },
-);
+const server = Bun.serve({
+  development: Bun.env.NODE_ENV !== 'production',
+  fetch: app.fetch,
+  hostname: env.HOST,
+  idleTimeout: env.IDLE_TIMEOUT,
+  port: env.PORT,
+});
 
-if (process.env.NODE_ENV === 'production') {
-  gracefulShutdown(server);
-}
+startupLogger({ port: env.PORT, start });
+
+['SIGINT', 'SIGTERM'].forEach((signal) => {
+  process.on(signal, async () => {
+    await server.stop();
+
+    process.exit(0);
+  });
+});

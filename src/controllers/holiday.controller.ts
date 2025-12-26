@@ -2,12 +2,8 @@ import type { Context } from 'hono';
 import { cacheHeader } from 'pretty-cache-header';
 
 import { holidayParamsSchema } from '../schemas/holiday.schema';
-import {
-  DateHolidayResponse,
-  holidayService,
-  MonthHolidaysResponse,
-  YearHolidaysResponse,
-} from '../services/holiday.service';
+import type { DateHolidayResponse, MonthHolidaysResponse, YearHolidaysResponse } from '../services/holiday.service';
+import { holidayService } from '../services/holiday.service';
 
 export class HolidayController {
   health(c: Context) {

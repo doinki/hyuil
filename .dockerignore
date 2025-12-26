@@ -1,15 +1,14 @@
+.cursor
 .git
 .github
 .vscode
 dist
 node_modules
 .dockerignore
-.env
+.env*
 .gitignore
-.nvmrc
 .prettierignore
 .prettierrc.json
 Dockerfile
-eslint.config.js
 LICENSE
 README.md

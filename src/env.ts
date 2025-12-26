@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const envSchema = z.object({
   HOST: z.string().default('0.0.0.0'),
-  KEEPALIVE_TIMEOUT: z.coerce.number().int().positive().default(20_000),
+  IDLE_TIMEOUT: z.coerce.number().int().positive().default(20),
   PORT: z.coerce.number().int().positive().default(3000),
   SERVICE_KEY: z.string(),
 });
