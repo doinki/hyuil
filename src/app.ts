@@ -27,8 +27,13 @@ startupLogger({ port: env.PORT, start });
 
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, async () => {
-    await server.stop();
+    try {
+      await server.stop();
 
-    process.exit(0);
+      process.exit(0);
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
   });
 });

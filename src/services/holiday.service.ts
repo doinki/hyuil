@@ -28,35 +28,35 @@ export interface HolidayItem {
    * @example '2025-01-01'
    */
   date: string;
-  name: string;
   isHoliday: boolean;
+  name: string;
 }
 
 export interface YearHolidaysResponse {
-  year: number;
   holidays: HolidayItem[];
+  year: number;
 }
 
 export interface MonthHolidaysResponse {
-  year: number;
-  month: number;
   holidays: HolidayItem[];
+  month: number;
+  year: number;
 }
 
 export type DateHolidayResponse =
   | {
-      year: number;
-      month: number;
       day: number;
-      isHoliday: true;
       holiday: HolidayItem;
+      isHoliday: true;
+      month: number;
+      year: number;
     }
   | {
-      year: number;
-      month: number;
       day: number;
-      isHoliday: false;
       holiday: null;
+      isHoliday: false;
+      month: number;
+      year: number;
     };
 
 const { SERVICE_KEY } = env;
@@ -151,7 +151,7 @@ export class HolidayService {
     const targetDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     const holiday = holidays.find((h) => h.date === targetDate);
 
-    if (!holiday || !holiday.isHoliday) {
+    if (!holiday?.isHoliday) {
       return {
         day,
         holiday: null,

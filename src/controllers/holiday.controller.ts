@@ -18,7 +18,7 @@ export class HolidayController {
       return c.body(null);
     }
 
-    const { year, month, day } = result.data;
+    const { day, month, year } = result.data;
 
     let holiday: YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse | null = null;
     if (day && month) {
