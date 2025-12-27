@@ -169,6 +169,22 @@ export class HolidayService {
       year,
     };
   }
+
+  async getHoliday(
+    year: number,
+    month?: number,
+    day?: number,
+  ): Promise<YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse | null> {
+    if (day !== undefined && month !== undefined) {
+      return this.getDateHoliday(year, month, day);
+    }
+
+    if (month !== undefined) {
+      return this.getMonthHolidays(year, month);
+    }
+
+    return this.getYearHolidays(year);
+  }
 }
 
 export const holidayService = new HolidayService();

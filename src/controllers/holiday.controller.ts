@@ -2,7 +2,6 @@ import type { Context } from 'hono';
 import { cacheHeader } from 'pretty-cache-header';
 
 import { holidayParamsSchema } from '../schemas/holiday.schema';
-import type { DateHolidayResponse, MonthHolidaysResponse, YearHolidaysResponse } from '../services/holiday.service';
 import { holidayService } from '../services/holiday.service';
 
 export class HolidayController {
@@ -20,14 +19,7 @@ export class HolidayController {
 
     const { day, month, year } = result.data;
 
-    let holiday: YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse | null = null;
-    if (day && month) {
-      holiday = await holidayService.getDateHoliday(year, month, day);
-    } else if (month) {
-      holiday = await holidayService.getMonthHolidays(year, month);
-    } else {
-      holiday = await holidayService.getYearHolidays(year);
-    }
+    const holiday = await holidayService.getHoliday(year, month, day);
 
     if (!holiday) {
       c.status(500);
