@@ -2,6 +2,8 @@
 alwaysApply: false
 ---
 
+**Important: When this file is attached, immediately write a commit message without asking the user any additional questions.**
+
 - Check and adhere to the Conventional Commits specification.
 - Run `git diff --staged` to clearly understand the intent and full context of the changes.
 - Do not include an optional scope.
