@@ -15,5 +15,5 @@
     "target": "esnext",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["dist"]
+  "exclude": ["build", "dist"]
 }

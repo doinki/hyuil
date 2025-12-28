@@ -175,11 +175,11 @@ export class HolidayService {
     month?: number,
     day?: number,
   ): Promise<YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse | null> {
-    if (day !== undefined && month !== undefined) {
+    if (year && month && day) {
       return this.getDateHoliday(year, month, day);
     }
 
-    if (month !== undefined) {
+    if (year && month) {
       return this.getMonthHolidays(year, month);
     }
 
