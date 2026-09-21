@@ -15,7 +15,7 @@ interface HolidayApiResponse {
 interface HolidayItemRaw {
   dateKind: string;
   dateName: string;
-  isHoliday: 'Y' | 'N';
+  isHoliday: 'N' | 'Y';
   /**
    * @example 20250101
    */
@@ -59,8 +59,6 @@ export type DateHolidayResponse =
       year: number;
     };
 
-const { SERVICE_KEY } = env;
-
 const cache = new LRUCache<number, HolidayItem[]>({
   allowStale: true,
   max: new Date().getFullYear() - 2004 + 1,
@@ -84,56 +82,48 @@ function transformHolidayItem(raw: HolidayItemRaw): HolidayItem {
 }
 
 export class HolidayService {
-  async fetchHolidays(year: number): Promise<HolidayItem[] | null> {
+  private readonly serviceKey = env.SERVICE_KEY;
+
+  public async fetchHolidays(year: number): Promise<HolidayItem[] | null> {
     const url = new URL('https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo');
-    url.searchParams.set('serviceKey', SERVICE_KEY);
+    url.searchParams.set('serviceKey', this.serviceKey);
     url.searchParams.set('solYear', year.toString());
     url.searchParams.set('numOfRows', '100');
     url.searchParams.set('_type', 'json');
 
     const data = await fetch(url).then((res) => {
-      if (!res.ok) {
-        throw new Error([res.status, res.statusText].filter(Boolean).join(' '));
-      }
+      if (!res.ok) throw new Error([res.status, res.statusText].filter(Boolean).join(' '));
 
       return res.json() as Promise<HolidayApiResponse>;
     });
 
     const rawItems = data.response.body.items?.item;
-    if (!rawItems) {
-      return null;
-    }
+    if (!rawItems) return null;
 
     return rawItems.map(transformHolidayItem);
   }
 
-  async getHolidaysByYear(year: number): Promise<HolidayItem[] | null> {
+  public async getHolidaysByYear(year: number): Promise<HolidayItem[] | null> {
     if (!cache.has(year)) {
       const holidays = await this.fetchHolidays(year);
-      if (holidays) {
-        cache.set(year, holidays);
-      }
+      if (holidays) cache.set(year, holidays);
     }
 
     return cache.get(year) ?? null;
   }
 
-  async getYearHolidays(year: number): Promise<YearHolidaysResponse | null> {
+  public async getYearHolidays(year: number): Promise<null | YearHolidaysResponse> {
     const holidays = await this.getHolidaysByYear(year);
 
-    if (!holidays) {
-      return null;
-    }
+    if (!holidays) return null;
 
     return { holidays, year };
   }
 
-  async getMonthHolidays(year: number, month: number): Promise<MonthHolidaysResponse | null> {
+  public async getMonthHolidays(year: number, month: number): Promise<MonthHolidaysResponse | null> {
     const holidays = await this.getHolidaysByYear(year);
 
-    if (!holidays) {
-      return null;
-    }
+    if (!holidays) return null;
 
     const targetYearMonth = `${year}-${month.toString().padStart(2, '0')}`;
     const filteredHolidays = holidays.filter((holiday) => holiday.date.startsWith(targetYearMonth));
@@ -141,12 +131,10 @@ export class HolidayService {
     return { holidays: filteredHolidays, month, year };
   }
 
-  async getDateHoliday(year: number, month: number, day: number): Promise<DateHolidayResponse | null> {
+  public async getDateHoliday(year: number, month: number, day: number): Promise<DateHolidayResponse | null> {
     const holidays = await this.getHolidaysByYear(year);
 
-    if (!holidays) {
-      return null;
-    }
+    if (!holidays) return null;
 
     const targetDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     const holiday = holidays.find((h) => h.date === targetDate);
@@ -170,18 +158,14 @@ export class HolidayService {
     };
   }
 
-  async getHoliday(
+  public getHoliday(
     year: number,
     month?: number,
     day?: number,
-  ): Promise<YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse | null> {
-    if (year && month && day) {
-      return this.getDateHoliday(year, month, day);
-    }
+  ): Promise<DateHolidayResponse | MonthHolidaysResponse | null | YearHolidaysResponse> {
+    if (year && month && day) return this.getDateHoliday(year, month, day);
 
-    if (year && month) {
-      return this.getMonthHolidays(year, month);
-    }
+    if (year && month) return this.getMonthHolidays(year, month);
 
     return this.getYearHolidays(year);
   }

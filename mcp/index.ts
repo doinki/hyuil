@@ -7,21 +7,16 @@ const server = createMcpServer();
 
 server.registerTool(...getHolidayToolMetadata(), async (args) => {
   const url = new URL('https://hyuil.dongin.kim');
-  const { day, month, year } = args as { day?: number; month?: number; year: number };
-  if (year && month && day) {
-    url.pathname = `/${year}/${month}/${day}`;
-  } else if (year && month) {
-    url.pathname = `/${year}/${month}`;
-  } else if (year) {
-    url.pathname = `/${year}`;
-  }
+  const { day, month, year } = args;
+  if (year && month && day) url.pathname = `/${year}/${month}/${day}`;
+  else if (year && month) url.pathname = `/${year}/${month}`;
+  else if (year) url.pathname = `/${year}`;
 
   const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch: ` + [response.status, response.statusText].filter(Boolean).join(' '));
-  }
+  if (!response.ok)
+    throw new Error(`Failed to fetch: ${[response.status, response.statusText].filter(Boolean).join(' ')}`);
 
-  const data = (await response.json()) as YearHolidaysResponse | MonthHolidaysResponse | DateHolidayResponse;
+  const data = (await response.json()) as DateHolidayResponse | MonthHolidaysResponse | YearHolidaysResponse;
 
   return {
     content: [{ text: JSON.stringify(data), type: 'text' }],

@@ -4,12 +4,7 @@ import { cacheHeader } from 'pretty-cache-header';
 import { holidayParamsSchema } from '../schemas/holiday.schema';
 import { holidayService } from '../services/holiday.service';
 
-export class HolidayController {
-  health(c: Context) {
-    c.header('Cache-Control', cacheHeader({ noStore: true }));
-    return c.text('OK');
-  }
-
+export const holidayController = {
   async getHoliday(c: Context) {
     const result = holidayParamsSchema.safeParse(c.req.param());
     if (!result.success) {
@@ -35,7 +30,10 @@ export class HolidayController {
       }),
       'Content-Type': 'application/json; charset=utf-8',
     });
-  }
-}
+  },
 
-export const holidayController = new HolidayController();
+  health(c: Context) {
+    c.header('Cache-Control', cacheHeader({ noStore: true }));
+    return c.text('OK');
+  },
+};

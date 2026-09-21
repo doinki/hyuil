@@ -4,7 +4,7 @@ import { holidayService } from './services/holiday.service';
 export const mcpServer = createMcpServer();
 
 mcpServer.registerTool(...getHolidayToolMetadata(), async (args) => {
-  const { day, month, year } = args as { day?: number; month?: number; year: number };
+  const { day, month, year } = args;
 
   const data = await holidayService.getHoliday(year, month, day);
 

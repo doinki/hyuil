@@ -13,6 +13,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
+    "types": ["bun"],
     "verbatimModuleSyntax": true
   },
   "exclude": ["build", "dist"]

@@ -12,11 +12,10 @@ export function startupLogger(options: StartupLoggerOptions) {
   const protocol = https ? 'https' : 'http';
 
   const localUrl = `${protocol}://localhost:${port.toString()}/`;
-  let lanUrl: string | null = null;
+  let lanUrl: null | string = null;
   const localIp = ip();
-  if (localIp && /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./.test(localIp)) {
+  if (localIp && /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./.test(localIp))
     lanUrl = `${protocol}://${localIp}:${port.toString()}/`;
-  }
 
   if (typeof start === 'number') {
     const end = performance.now();

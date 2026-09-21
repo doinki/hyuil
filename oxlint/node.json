@@ -1,0 +1,18 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["node"],
+  "rules": {
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/global-require.html
+    "node/global-require": "off",
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/handle-callback-err.html
+    "node/handle-callback-err": "error",
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/no-exports-assign.html
+    "node/no-exports-assign": "error",
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/no-new-require.html
+    "node/no-new-require": "error",
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/no-path-concat.html
+    "node/no-path-concat": "error",
+    // https://oxc.rs/docs/guide/usage/linter/rules/node/no-process-env.html
+    "node/no-process-env": "off"
+  }
+}

@@ -17,9 +17,7 @@ app.use(logger());
 
 const transport = new StreamableHTTPTransport();
 app.all('/mcp', async (c) => {
-  if (!mcpServer.isConnected()) {
-    await mcpServer.connect(transport);
-  }
+  if (!mcpServer.isConnected()) await mcpServer.connect(transport);
 
   return transport.handleRequest(c);
 });
